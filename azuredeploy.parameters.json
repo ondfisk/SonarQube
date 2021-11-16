@@ -6,7 +6,7 @@
             "value": "ondfisk"
         },
         "sqlServerLogin": {
-            "value": "SonarQube"
+            "value": "sysadm"
         },
         "sqlAzureAdLogin": {
             "value": "SQL Administrators"
@@ -18,6 +18,9 @@
             "value": "f55f8d34-f987-4f53-90a3-64b36965b5c4"
         },
         "sqlDatabaseName": {
+            "value": "SonarQube"
+        },
+        "sqlDatabaseLogin": {
             "value": "SonarQube"
         },
         "appServicePlanName": {
