@@ -23,6 +23,9 @@
         "sqlDatabaseLogin": {
             "value": "SonarQube"
         },
+        "storageAccountName": {
+            "value": "ondfisk"
+        },
         "appServicePlanName": {
             "value": "ondfisk"
         },
