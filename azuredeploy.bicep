@@ -7,6 +7,9 @@ param sqlAzureAdLogin string
 param sqlAzureAdPrincipalType string
 param sqlAzureAdPrincipalId string
 param sqlDatabaseName string
+param sqlDatabaseLogin string
+@secure()
+param sqlDatabasePassword string
 param appServicePlanName string
 param webAppName string
 
@@ -43,6 +46,9 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   name: appServicePlanName
   location: location
   kind: 'linux'
+  sku: {
+    name: 'P1V3'
+  }
   properties: {
     elasticScaleEnabled: false
     reserved: true
@@ -78,8 +84,8 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
     name: 'appsettings'
     properties: {
       SONAR_JDBC_URL: 'jdbc:sqlserver://${sqlServer.properties.fullyQualifiedDomainName};databaseName=${sqlDatabaseName}'
-      SONAR_JDBC_USERNAME: sqlServerLogin
-      SONAR_JDBC_PASSWORD: sqlServerPassword
+      SONAR_JDBC_USERNAME: sqlDatabaseLogin
+      SONAR_JDBC_PASSWORD: sqlDatabasePassword
     }
   }
 }
