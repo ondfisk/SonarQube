@@ -8,6 +8,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  RESOURCE_GROUP_NAME: ondfisk
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -25,7 +28,7 @@ jobs:
         with:
           scope: resourcegroup
           region: northeurope
-          resourceGroupName: ${{ resourceGroupName }}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./azuredeploy.bicep
           deploymentMode: Validate
           parameters: azuredeploy.parameters.json sqlServerPassword=${{ secrets.SQL_SERVER_PASSWORD }}
