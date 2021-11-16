@@ -10,8 +10,11 @@ param sqlDatabaseName string
 param sqlDatabaseLogin string
 @secure()
 param sqlDatabasePassword string
+param storageAccountName string
 param appServicePlanName string
 param webAppName string
+
+var shareName = 'sonarqube-extensions'
 
 resource sqlServer 'Microsoft.Sql/servers@2021-05-01-preview' = {
   name: sqlServerName
@@ -28,6 +31,15 @@ resource sqlServer 'Microsoft.Sql/servers@2021-05-01-preview' = {
       tenantId: subscription().tenantId
     }
     minimalTlsVersion: '1.2'
+    publicNetworkAccess: 'Enabled'
+  }
+
+  resource firewallRules 'firewallRules' = {
+    name: 'AllowAllWindowsAzureIps'
+    properties: {
+      startIpAddress: '0.0.0.0'
+      endIpAddress: '0.0.0.0'
+    }
   }
 
   resource sqlDatabase 'databases' = {
@@ -38,6 +50,32 @@ resource sqlServer 'Microsoft.Sql/servers@2021-05-01-preview' = {
     }
     properties: {
       collation: 'SQL_Latin1_General_CP1_CS_AS' // Collation MUST be case-sensitive (CS) and accent-sensitive (AS).
+    }
+  }
+}
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_GRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    allowBlobPublicAccess: false
+    allowSharedKeyAccess: true
+    isHnsEnabled: false
+    isNfsV3Enabled: false
+    largeFileSharesState: 'Disabled'
+    minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
+  }
+
+  resource fileServices 'fileServices' = {
+    name: 'default'
+
+    resource shared 'shares' = {
+      name: shareName
     }
   }
 }
@@ -77,6 +115,7 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       linuxFxVersion: 'DOCKER|sonarqube:latest'
+      appCommandLine: '-Dsonar.es.bootstrap.checks.disable=true'
     }
   }
 
@@ -86,6 +125,19 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
       SONAR_JDBC_URL: 'jdbc:sqlserver://${sqlServer.properties.fullyQualifiedDomainName};databaseName=${sqlDatabaseName}'
       SONAR_JDBC_USERNAME: sqlDatabaseLogin
       SONAR_JDBC_PASSWORD: sqlDatabasePassword
+    }
+  }
+
+  resource share 'config' = {
+    name: 'azurestorageaccounts'
+    properties: {
+      'sonarqube-extensions': {
+        type: 'AzureFiles'
+        accountName: storageAccountName
+        accessKey: storageAccount.listKeys().keys[0].value
+        shareName: shareName
+        mountPath: '/opt/sonarqube/extensions'
+      }
     }
   }
 }
