@@ -69,4 +69,4 @@ jobs:
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./azuredeploy.bicep
           deploymentMode: Incremental
-          parameters: azuredeploy.parameters.json sqlServerPassword=${{ secrets.SQL_SERVER_PASSWORD }}
+          parameters: azuredeploy.parameters.json sqlServerPassword=${{ secrets.SQL_SERVER_PASSWORD }} sqlDatabasePassword=${{ secrets.SQL_DATABASE_PASSWORD }}
