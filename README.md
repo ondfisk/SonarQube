@@ -28,7 +28,15 @@ Sample of SonarQube running on Azure App Service on Linux (container) with Azure
     GO
     ```
 
+1. Configure Azure AD App Registration:
+
+    - Redirect URI: <https://ondfisksonarqube.azurewebsites.net/oauth2/callback/aad>
+
 1. Go to deployed web site and login to SonarQube to complete configuration
+
+    - Configuration/General Settings/General/Server base URL: <https://ondfisksonarqube.azurewebsites.net/>
+    - Configuration/Marketplace//Plugins: Install *Azure Active Directory (AAD) Authentication Plug-in for SonarQube INTEGRATION*
+    - Configuration/General Settings/Azure Active Directory: ...
 
 ## TODO
 
