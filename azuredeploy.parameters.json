@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "value": "ondfisk"
+        },
+        "sqlServerLogin": {
+            "value": "SonarQube"
+        },
+        "sqlAzureAdLogin": {
+            "value": "SQL Administrators"
+        },
+        "sqlAzureAdPrincipalType": {
+            "value": "Group"
+        },
+        "sqlAzureAdPrincipalId": {
+            "value": "f55f8d34-f987-4f53-90a3-64b36965b5c4"
+        },
+        "sqlDatabaseName": {
+            "value": "SonarQube"
+        },
+        "appServicePlanName": {
+            "value": "ondfisk"
+        },
+        "webAppName": {
+            "value": "ondfisksonarqube"
+        }
+    }
+}

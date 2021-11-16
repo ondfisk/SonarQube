@@ -1,0 +1,31 @@
+name: SonarQube
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Azure Resource Manager (ARM) Template
+        uses: Azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          region: northeurope
+          resourceGroupName: ${{ resourceGroupName }}
+          template: ./azuredeploy.bicep
+          deploymentMode: Validate
+          parameters: azuredeploy.parameters.json sqlServerPassword=${{ secrets.SQL_SERVER_PASSWORD }}
