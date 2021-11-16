@@ -10,10 +10,12 @@ on:
 
 env:
   RESOURCE_GROUP_NAME: ondfisk
+  LOCATION: northeurope
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    environment: Production
 
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +29,7 @@ jobs:
         uses: Azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          region: northeurope
+          region: ${{ env.LOCATION }}
           resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
           template: ./azuredeploy.bicep
           deploymentMode: Validate
