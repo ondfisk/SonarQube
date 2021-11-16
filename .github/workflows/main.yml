@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  RESOURCE_GROUP_NAME: ondfisk
+  RESOURCE_GROUP_NAME: ondfisk-pango
   LOCATION: northeurope
 
 jobs:
