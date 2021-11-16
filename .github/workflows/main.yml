@@ -1,0 +1,69 @@
+name: SonarQube
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:
+  RESOURCE_GROUP_NAME: ondfisk
+  LOCATION: northeurope
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Azure Resource Group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create --name ${{ env.RESOURCE_GROUP_NAME }} --location ${{ env.LOCATION }}
+
+      - name: Deploy Azure Resources
+        uses: Azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          region: ${{ env.LOCATION }}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+          template: ./azuredeploy.bicep
+          deploymentMode: Validate
+          parameters: azuredeploy.parameters.json sqlServerPassword=${{ secrets.SQL_SERVER_PASSWORD }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - validate
+    environment: Production
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Azure Resources
+        uses: Azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          region: ${{ env.LOCATION }}
+          resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+          template: ./azuredeploy.bicep
+          deploymentMode: Incremental
+          parameters: azuredeploy.parameters.json sqlServerPassword=${{ secrets.SQL_SERVER_PASSWORD }}
