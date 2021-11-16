@@ -64,9 +64,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   properties: {
     allowBlobPublicAccess: false
     allowSharedKeyAccess: true
-    isHnsEnabled: false
-    isNfsV3Enabled: false
-    largeFileSharesState: 'Disabled'
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true
   }
